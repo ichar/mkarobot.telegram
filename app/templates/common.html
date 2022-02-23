@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block styles %}
+
+{% block page_styles %}{% endblock %}
+
+<style type="text/css">
+
+</style>
+
+{% endblock %}
+
+{% block sidebar_content %}
+
+<div id="sidebarBox">
+  <div id="sidebarFrame">
+
+    <div id="sidebar-semaphore">
+
+    </div>
+
+    <div id="sidebar-content">
+    
+      <div id="menu">
+
+      {{ Forms.commands(base) }}
+
+      {{ Forms.search(root, search) }}
+
+      </div>
+
+      {% block control_panel %}{% endblock %}
+
+      {% block filter %}{% endblock %}
+
+    </div>
+  
+  </div>
+  
+  <div id="sidebarMobilePointer"></div>
+  <div id="sidebarPointer"><div class="sidebar-pointer"></div></div>
+</div>
+
+{% endblock %}
+
+{% block page_content %}
+
+<section id="data-section">
+
+  <div id="page-container">
+
+  {% block data_section_content %}{% endblock %}
+
+  <div id="log-pagination">
+    <table border="0">
+    <form action="{{ pagination['link'] }}" id="pagination-form" method="GET" onSubmit="return $onPaginationFormSubmit(this);">
+    <input type="hidden" name="sidebar" value="" />
+
+    {% block pagination_form %}{% endblock %}
+
+    <tr>
+      <td><div class="caption total_rows">{% block pagination_title %}{% endblock %}:<div class="total" title="{{ pagination['title'] }}">{{ pagination['total'] }}</div></div></td>
+      <td>
+        <div id="log-page">
+          <dl>
+            <dd id="page:prev" class="pagination auto prev">
+              <a class="page nav {% if pagination['has_prev'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&prev=1" title="Назад"> << </a>
+            </dd>
+            <dd id="page:next" class="pagination auto next">
+              <a class="page nav {% if pagination['has_next'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&next=1" title="Вперед"> >> </a>
+            </dd>
+            {% for p in pagination['iter_pages'] %}
+              {%- if p == -1 -%}
+            <dd class="pagination spaced disabled">...</dd>
+              {%- else -%}
+            <dd id="page:{{ p }}" class="pagination valid enabled {% if p == pagination['current_page'] %}selected{% endif %}">
+              <a class="page" href="{{ pagination['link'] }}&page={{ p }}">{{ p }}</a>
+            </dd>
+              {%- endif -%}
+            {% endfor -%}
+          </dl>
+        </div>
+      </td>
+      <td>
+        <div id="log-per-page">
+          <div class="caption per_page">{{ _('Page records') }}:</div>
+          <select class="popup" id="per-page" name="per_page" onchange="javascript:$SidebarControl.submit(this.form);">
+          {% for o in pagination['per_page_options'] -%}
+            <option value="{{ o }}" {% if pagination['per_page'] == o %}selected{% endif %}>{{ o }}</option>
+          {%- endfor %}
+          </select>
+        </div>
+      </td>
+
+      {% if pagination['sort']['modes'] %}
+      <td>
+        <div id="log-sortbox">
+          <div class="caption sortbox">{{ _('Order by') }}:</div>
+          <select class="popup" name="sort" onchange="javascript:$SidebarControl.submit(this.form);">
+          {% for value, name in pagination['sort']['modes'] -%}
+            <option value="{{ value }}" {% if pagination['sort']['current_sort'] == value %}selected{% endif %}>{{ name|safe }}</option>
+          {%- endfor -%}
+          </select>
+        </div>
+      </td>
+      {% endif %}
+
+      {% block pagination_icons %}{% endblock %}
+    </tr>
+
+    </form>
+    </table>
+
+  </div>
+
+  {% block info_section_content %}{% endblock %}
+
+  </div>
+
+</section>
+
+<section id="footer-section">
+
+  {% block footer %}{% include 'default-footer.html' %}{% endblock %}
+
+</section>
+
+{% endblock %}
